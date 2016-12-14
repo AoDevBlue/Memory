@@ -89,26 +89,25 @@ public class GameFragment extends Fragment implements GameContract.View {
 
         LayoutInflater inflater = LayoutInflater.from(getContext());
         for (int i = 0; i < rowCount*columnCount; i++) {
-            View view = inflater.inflate(R.layout.game_card, gameBoardLayout, false);
-            gameBoardLayout.addView(view);
+            inflater.inflate(R.layout.game_card, gameBoardLayout, true);
         }
     }
 
     @Override
     public void hideCard(int row, int column, @NonNull Card.Type type) {
-        TextView cardView = getCardView(row, column);
+        CardView cardView = getCardView(row, column);
         cardView.setText("");
     }
 
     @Override
     public void showCard(int row, int column, @NonNull Card.Type type, @NonNull String text) {
-        TextView cardView = getCardView(row, column);
+        CardView cardView = getCardView(row, column);
         cardView.setText(text);
     }
 
-    private TextView getCardView(int row, int column) {
+    private CardView getCardView(int row, int column) {
         int childIndex = row * gameBoardLayout.getColumnCount() + column;
-        return (TextView) gameBoardLayout.getChildAt(childIndex);
+        return (CardView) gameBoardLayout.getChildAt(childIndex);
     }
 
     private void displayLayout(View layout) {
