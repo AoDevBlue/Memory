@@ -2,23 +2,28 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginStart="@dimen/activity_horizontal_margin"
+    android:layout_marginEnd="@dimen/activity_horizontal_margin"
+    android:layout_marginTop="@dimen/activity_vertical_margin"
+    android:layout_marginBottom="@dimen/activity_vertical_margin"
     tools:context="blue.aodev.memory.activities.game.GameFragment">
 
+    <!-- Loading layout -->
     <ProgressBar
         android:id="@+id/loading_indicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        style="?android:attr/progressBarStyleLarge" />
+        style="?android:attr/progressBarStyleLarge"
+        tools:visibility="invisible"/>
 
+    <!-- Error layout -->
     <LinearLayout
         android:id="@+id/error_layout"
         android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin"
         android:gravity="center_horizontal"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
@@ -34,4 +39,41 @@
             android:layout_height="wrap_content"
             android:text="@string/activity_game_loading_retry" />
     </LinearLayout>
+
+    <!-- Game layout -->
+    <RelativeLayout
+        android:id="@+id/game_layout"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="visible"
+        tools:visibility="visible">
+        <LinearLayout
+            android:id="@+id/game_header"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/activity_vertical_margin">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                tools:text="Time counter" />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                tools:text="Flip counter" />
+        </LinearLayout>
+
+        <GridLayout
+            android:id="@+id/game_board_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/game_header"
+            tools:background="@color/colorAccent"/>
+
+    </RelativeLayout>
 </RelativeLayout>

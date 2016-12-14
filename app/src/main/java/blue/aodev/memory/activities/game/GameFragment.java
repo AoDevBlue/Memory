@@ -8,9 +8,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.GridLayout;
 import android.widget.ProgressBar;
-
-import java.util.List;
+import android.widget.TextView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -23,6 +23,8 @@ public class GameFragment extends Fragment implements GameContract.View {
     @BindView(R.id.loading_indicator) ProgressBar loadingIndicator;
     @BindView(R.id.retry_loading_button) Button retryLoadingButton;
     @BindView(R.id.error_layout) View errorLayout;
+    @BindView(R.id.game_layout) View gameLayout;
+    @BindView(R.id.game_board_layout) GridLayout gameBoardLayout;
 
     public GameFragment() {
         // Required empty public constructor
@@ -61,26 +63,60 @@ public class GameFragment extends Fragment implements GameContract.View {
 
     @Override
     public void showLoading() {
-        loadingIndicator.setVisibility(View.VISIBLE);
-        errorLayout.setVisibility(View.GONE);
+        displayLayout(loadingIndicator);
     }
 
     @Override
     public void showLoadingError() {
-        loadingIndicator.setVisibility(View.GONE);
-        errorLayout.setVisibility(View.VISIBLE);
-
+        displayLayout(errorLayout);
     }
 
     @Override
-    public void showCards(List<Card> cards) {
-        loadingIndicator.setVisibility(View.GONE);
-        errorLayout.setVisibility(View.GONE);
+    public void showGame() {
+        displayLayout(gameLayout);
     }
 
     @Override
-    public void flipCard(@NonNull Card card) {
+    public float getBoardAspectRatio() {
+        return gameBoardLayout.getWidth() / gameBoardLayout.getHeight();
+    }
 
+    @Override
+    public void setBoardSize(int rowCount, int columnCount) {
+        gameBoardLayout.removeAllViews();
+        gameBoardLayout.setColumnCount(columnCount);
+        gameBoardLayout.setRowCount(rowCount);
+
+        LayoutInflater inflater = LayoutInflater.from(getContext());
+        for (int i = 0; i < rowCount*columnCount; i++) {
+            View view = inflater.inflate(R.layout.game_card, gameBoardLayout, false);
+            gameBoardLayout.addView(view);
+        }
+    }
+
+    @Override
+    public void hideCard(int row, int column, @NonNull Card.Type type) {
+        TextView cardView = getCardView(row, column);
+        cardView.setText("");
+    }
+
+    @Override
+    public void showCard(int row, int column, @NonNull Card.Type type, @NonNull String text) {
+        TextView cardView = getCardView(row, column);
+        cardView.setText(text);
+    }
+
+    private TextView getCardView(int row, int column) {
+        int childIndex = row * gameBoardLayout.getColumnCount() + column;
+        return (TextView) gameBoardLayout.getChildAt(childIndex);
+    }
+
+    private void displayLayout(View layout) {
+        loadingIndicator.setVisibility(View.INVISIBLE);
+        errorLayout.setVisibility(View.INVISIBLE);
+        gameLayout.setVisibility(View.INVISIBLE);
+
+        layout.setVisibility(View.VISIBLE);
     }
 
     @Override

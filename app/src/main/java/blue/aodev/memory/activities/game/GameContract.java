@@ -15,9 +15,15 @@ public interface GameContract {
 
         void showLoadingError();
 
-        void showCards(List<Card> cards);
+        void showGame();
 
-        void flipCard(@NonNull Card card);
+        float getBoardAspectRatio();
+
+        void setBoardSize(int rowCount, int columnCount);
+
+        void hideCard(int row, int column, @NonNull Card.Type type);
+
+        void showCard(int row, int column, @NonNull Card.Type type, @NonNull String text);
 
         void setFlipCount(int flipCount);
 
@@ -31,7 +37,7 @@ public interface GameContract {
     }
 
     interface Presenter extends BasePresenter {
-        void selectCard(Card card);
+        void selectCard(int row, int column);
 
         void newGame();
 

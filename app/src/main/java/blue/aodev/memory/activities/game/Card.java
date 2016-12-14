@@ -15,7 +15,7 @@ public class Card {
     private final int itemId;
     private final String text;
     private final Type type;
-    private boolean flipped = false;
+    private boolean flipped = true;
 
     public Card(int itemId, @NonNull String text, @NonNull Type type) {
         this.itemId = itemId;
