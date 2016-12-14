@@ -2,5 +2,8 @@
 <resources>
     <color name="colorPrimary">#FFC107</color>
     <color name="colorPrimaryDark">#FFA000</color>
-    <color name="colorAccent">#FF5252</color>
+    <color name="colorAccent">#B2FF59</color>
+
+    <color name="cardColorCue">#FFECB3</color>
+    <color name="cardColorResponse">#DCEDC8</color>
 </resources>

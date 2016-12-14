@@ -5,12 +5,15 @@ import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.widget.TextView;
 
+import butterknife.BindColor;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import blue.aodev.memory.R;
 
 public class CardView extends android.support.v7.widget.CardView {
 
+    @BindColor(R.color.cardColorCue) int cueColor;
+    @BindColor(R.color.cardColorResponse) int responseColor;
     @BindView(R.id.text) TextView textView;
 
     public CardView(Context context) {
@@ -35,5 +38,17 @@ public class CardView extends android.support.v7.widget.CardView {
 
     public void setText(@NonNull String text) {
         textView.setText(text);
+    }
+
+    public void setType(Card.Type type) {
+        switch (type) {
+            case CUE:
+                setBackgroundColor(cueColor);
+                break;
+            case RESPONSE:
+            default:
+                setBackgroundColor(responseColor);
+                break;
+        }
     }
 }
