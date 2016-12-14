@@ -25,6 +25,12 @@ public class GamePresenter implements GameContract.Presenter {
     /** The state of the board **/
     private Card[][] board;
 
+    /** The number of items the game has **/
+    private int itemCount;
+
+    /** The number of items that were matched **/
+    private int matchedItemCount;
+
     /** The index of the card flipped first during a two cards flip **/
     private Point firstFlippedPos;
 
@@ -78,12 +84,12 @@ public class GamePresenter implements GameContract.Presenter {
         int columnCount = 2;
 
         int targetSize = columnCount*rowCount;
-        int size = Math.min(data.getGoalItems().length, targetSize/2);
+        itemCount = Math.min(data.getGoalItems().length, targetSize/2);
         view.setBoardSize(rowCount, columnCount);
 
         board = new Card[6][4];
 
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < itemCount; i++) {
             GoalItem.Item item = data.getGoalItems()[i].getItem();
             Card cueCard = new Card(item.getId(), item.getCue().getText(), Card.Type.CUE);
             Card responseCard =
@@ -141,7 +147,11 @@ public class GamePresenter implements GameContract.Presenter {
                 // We have a match! We keep the two cards flipped
                 firstFlippedPos = null;
 
-                //TODO check if it was the last one
+                // We check for the game's end
+                matchedItemCount++;
+                if (matchedItemCount == itemCount) {
+                    endGame();
+                }
             } else {
                 // We flip back the two cards after some time
                 final Point pos1 = firstFlippedPos;
@@ -161,5 +171,9 @@ public class GamePresenter implements GameContract.Presenter {
                 }, 1000);
             }
         }
+    }
+
+    private void endGame() {
+        view.showScores();
     }
 }
