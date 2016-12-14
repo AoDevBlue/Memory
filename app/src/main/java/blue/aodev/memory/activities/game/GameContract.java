@@ -35,6 +35,8 @@ public interface GameContract {
     }
 
     interface Presenter extends BasePresenter {
+        void stop();
+
         void selectCard(int row, int column);
 
         void newGame();

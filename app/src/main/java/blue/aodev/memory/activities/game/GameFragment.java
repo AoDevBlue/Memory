@@ -63,6 +63,12 @@ public class GameFragment extends Fragment implements GameContract.View {
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        presenter.stop();
+    }
+
+    @Override
     public void setPresenter(GameContract.Presenter presenter) {
         this.presenter = presenter;
     }

@@ -55,6 +55,16 @@ public class GamePresenter implements GameContract.Presenter {
         if (board == null) {
             loadData();
         }
+        if (timer != null) {
+            timer.resume();
+        }
+    }
+
+    @Override
+    public void stop() {
+        if (timer != null) {
+            timer.pause();
+        }
     }
 
     @Override
