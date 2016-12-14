@@ -29,6 +29,8 @@ public class GameFragment extends Fragment implements GameContract.View {
     @BindView(R.id.game_layout) View gameLayout;
     @BindView(R.id.game_board_layout) GridLayout gameBoardLayout;
     @BindView(R.id.time_count) TextView timeCountView;
+    @BindView(R.id.flip_count) TextView flipCountView;
+
 
     public GameFragment() {
         // Required empty public constructor
@@ -135,7 +137,7 @@ public class GameFragment extends Fragment implements GameContract.View {
 
     @Override
     public void setFlipCount(int flipCount) {
-
+        flipCountView.setText(getResources().getString(R.string.activity_game_flips, flipCount));
     }
 
     @Override

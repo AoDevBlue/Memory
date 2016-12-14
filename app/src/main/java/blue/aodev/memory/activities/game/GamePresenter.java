@@ -42,6 +42,9 @@ public class GamePresenter implements GameContract.Presenter {
     /** Timer used to compute the score **/
     private Timer timer;
 
+    /** Number of flips made **/
+    private int flipCount;
+
     public GamePresenter(@NonNull GameContract.View view) {
         this.view = view;
         view.setPresenter(this);
@@ -87,7 +90,27 @@ public class GamePresenter implements GameContract.Presenter {
 
     @Override
     public void newGame() {
-        // 6 by 2 for now
+        createBoard();
+        flipCount = 0;
+
+        // Display the initial state
+        view.showGame();
+        displayBoard();
+        view.setFlipCount(flipCount);
+        view.setTime(0);
+
+        // Start the timer
+        timer = new Timer(200, new Timer.Listener() {
+            @Override
+            public void onUpdate(long elapsedTimeMs) {
+                view.setTime((int) (elapsedTimeMs/1000));
+            }
+        });
+        timer.start();
+    }
+
+    private void createBoard() {
+        // The size is not dynamic currently
         int rowCount = 6;
         int columnCount = 2;
         board = new Card[rowCount][columnCount];
@@ -112,19 +135,6 @@ public class GamePresenter implements GameContract.Presenter {
         for (int i = 0; i < itemCount*2; i++) {
             board[i/columnCount][i%columnCount] = cards.get(i);
         }
-
-        // Display the initial board
-        view.showGame();
-        displayBoard();
-
-        // Start the timer
-        timer = new Timer(200, new Timer.Listener() {
-            @Override
-            public void onUpdate(long elapsedTimeMs) {
-                view.setTime((int) (elapsedTimeMs/1000));
-            }
-        });
-        timer.start();
     }
 
     private void displayBoard() {
@@ -159,6 +169,8 @@ public class GamePresenter implements GameContract.Presenter {
         // We flip the card to show it to the user
         flipping.flip();
         displayCard(row, column);
+        flipCount++;
+        view.setFlipCount(flipCount);
 
         if (firstFlippedPos == null) {
             // It's the first card we flip, just store it
