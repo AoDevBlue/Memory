@@ -55,12 +55,14 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/activity_vertical_margin">
             <TextView
+                android:id="@+id/time_count"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center_horizontal"
                 tools:text="Time counter" />
             <TextView
+                android:id="@+id/flip_count"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"

@@ -11,6 +11,7 @@ import java.util.List;
 import blue.aodev.memory.data.api.ApiEndpoints;
 import blue.aodev.memory.data.api.GoalItem;
 import blue.aodev.memory.data.api.GoalResponse;
+import blue.aodev.memory.util.Timer;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -37,6 +38,9 @@ public class GamePresenter implements GameContract.Presenter {
 
     /** The index of the card flipped first during a two cards flip **/
     private Point firstFlippedPos;
+
+    /** Timer used to compute the score **/
+    private Timer timer;
 
     public GamePresenter(@NonNull GameContract.View view) {
         this.view = view;
@@ -112,6 +116,15 @@ public class GamePresenter implements GameContract.Presenter {
         // Display the initial board
         view.showGame();
         displayBoard();
+
+        // Start the timer
+        timer = new Timer(200, new Timer.Listener() {
+            @Override
+            public void onUpdate(long elapsedTimeMs) {
+                view.setTime((int) (elapsedTimeMs/1000));
+            }
+        });
+        timer.start();
     }
 
     private void displayBoard() {
@@ -184,5 +197,8 @@ public class GamePresenter implements GameContract.Presenter {
 
     private void endGame() {
         view.showScores();
+        timer.stop();
+        int totalTime = (int) timer.getTotalTime();
+        //TODO compute the score
     }
 }

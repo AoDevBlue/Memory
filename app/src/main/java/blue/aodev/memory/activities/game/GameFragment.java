@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -19,11 +20,15 @@ import blue.aodev.memory.activities.score.ScoresActivity;
 public class GameFragment extends Fragment implements GameContract.View {
 
     private GameContract.Presenter presenter;
+
     @BindView(R.id.loading_indicator) ProgressBar loadingIndicator;
+
     @BindView(R.id.retry_loading_button) Button retryLoadingButton;
     @BindView(R.id.error_layout) View errorLayout;
+
     @BindView(R.id.game_layout) View gameLayout;
     @BindView(R.id.game_board_layout) GridLayout gameBoardLayout;
+    @BindView(R.id.time_count) TextView timeCountView;
 
     public GameFragment() {
         // Required empty public constructor
@@ -135,7 +140,7 @@ public class GameFragment extends Fragment implements GameContract.View {
 
     @Override
     public void setTime(int time) {
-
+        timeCountView.setText(getResources().getString(R.string.activity_game_time, time));
     }
 
     @Override
