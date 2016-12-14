@@ -4,12 +4,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import blue.aodev.memory.R;
 import blue.aodev.memory.activities.game.GameActivity;
+import blue.aodev.memory.activities.score.ScoresActivity;
 
 public class MainActivity extends AppCompatActivity {
     @BindView(R.id.new_game_button) Button newGameButton;
@@ -31,8 +31,7 @@ public class MainActivity extends AppCompatActivity {
         highScoresButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO Launch the score activity
-                Toast.makeText(MainActivity.this, "TODO!", Toast.LENGTH_SHORT).show();
+                startActivity(ScoresActivity.createIntent(MainActivity.this));
             }
         });
     }

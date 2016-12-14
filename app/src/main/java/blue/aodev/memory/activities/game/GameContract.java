@@ -23,7 +23,7 @@ public interface GameContract {
 
         void setTime(int time);
 
-        void showScores(int score);
+        void showScores();
     }
 
     interface Presenter extends BasePresenter {

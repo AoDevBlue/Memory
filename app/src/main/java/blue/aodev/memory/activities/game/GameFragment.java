@@ -66,7 +66,7 @@ public class GameFragment extends Fragment implements GameContract.View {
     }
 
     @Override
-    public void showScores(int score) {
+    public void showScores() {
         //TODO Launch the scores activity
     }
 }
