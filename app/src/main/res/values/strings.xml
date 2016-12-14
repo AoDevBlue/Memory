@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">Memory</string>
+
+    <!-- Main activity -->
+    <string name="activity_main_new_game">New game</string>
+    <string name="activity_main_scores">High scores</string>
+
+    <!-- Game activity -->
+    <string name="activity_game_time">Time: %1$d</string>
+    <string name="activity_game_flips">Flips: %1$d</string>
+
+    <!-- Scores activity -->
+
+
 </resources>
