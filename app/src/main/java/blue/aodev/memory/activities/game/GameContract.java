@@ -2,8 +2,6 @@ package blue.aodev.memory.activities.game;
 
 import android.support.annotation.NonNull;
 
-import java.util.List;
-
 import blue.aodev.memory.BasePresenter;
 import blue.aodev.memory.BaseView;
 

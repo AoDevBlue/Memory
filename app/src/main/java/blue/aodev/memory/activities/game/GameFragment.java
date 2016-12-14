@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -82,7 +81,7 @@ public class GameFragment extends Fragment implements GameContract.View {
     }
 
     @Override
-    public void setBoardSize(int rowCount, int columnCount) {
+    public void setBoardSize(int rowCount, final int columnCount) {
         gameBoardLayout.removeAllViews();
         gameBoardLayout.setColumnCount(columnCount);
         gameBoardLayout.setRowCount(rowCount);
@@ -90,6 +89,15 @@ public class GameFragment extends Fragment implements GameContract.View {
         LayoutInflater inflater = LayoutInflater.from(getContext());
         for (int i = 0; i < rowCount*columnCount; i++) {
             inflater.inflate(R.layout.game_card, gameBoardLayout, true);
+
+            final int row = i/columnCount;
+            final int column = i%columnCount;
+            gameBoardLayout.getChildAt(i).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    presenter.selectCard(row, column);
+                }
+            });
         }
     }
 
