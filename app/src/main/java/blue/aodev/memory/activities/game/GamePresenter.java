@@ -53,7 +53,11 @@ public class GamePresenter implements GameContract.Presenter {
     @Override
     public void start() {
         if (board == null) {
-            loadData();
+            if (data == null) {
+                loadData();
+            } else {
+                newGame();
+            }
         }
         if (timer != null) {
             timer.resume();
@@ -87,8 +91,9 @@ public class GamePresenter implements GameContract.Presenter {
             @Override
             public void onResponse(Call<GoalResponse> call, Response<GoalResponse> response) {
                 data = response.body();
-                //TODO check if the view is still available
-                newGame();
+                if (view.isActive()) {
+                    newGame();
+                }
             }
 
             @Override
@@ -177,16 +182,14 @@ public class GamePresenter implements GameContract.Presenter {
         }
 
         // We flip the card to show it to the user
-        flipping.flip();
-        displayCard(row, column);
-        flipCount++;
-        view.setFlipCount(flipCount);
+        revealCard(row, column);
 
         if (firstFlippedPos == null) {
             // It's the first card we flip, just store it
             firstFlippedPos = new Point(row, column);
         } else {
             Card firstFlipped = board[firstFlippedPos.x][firstFlippedPos.y];
+
             if (firstFlipped.getItemId() == flipping.getItemId()) {
                 // We have a match! We keep the two cards flipped
                 firstFlippedPos = null;
@@ -198,23 +201,45 @@ public class GamePresenter implements GameContract.Presenter {
                 }
             } else {
                 // We flip back the two cards after some time
-                final Point pos1 = firstFlippedPos;
-                final Point pos2 = new Point(row, column);
+                flipBack(firstFlippedPos, new Point(row, column));
                 firstFlippedPos = null;
-                flipping.flip();
-                firstFlipped.flip();
-
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        //TODO check if the view is still available
-                        displayCard(pos1.x, pos1.y);
-                        displayCard(pos2.x, pos2.y);
-                    }
-                }, 1000);
             }
         }
+    }
+
+    /**
+     * Flip a card that was not flipped and update the view.
+     */
+    private void revealCard(int row, int column) {
+        Card card = board[row][column];
+
+        // Flip the card
+        card.flip();
+        displayCard(row, column);
+
+        // Update the flip count
+        flipCount++;
+        view.setFlipCount(flipCount);
+    }
+
+    /**
+     * Flip back two cards that did not match.
+     */
+    private void flipBack(@NonNull final Point firstPos, @NonNull final Point secondPos) {
+        // The cards are instantly available for a new flip
+        board[firstPos.x][firstPos.y].flip();
+        board[secondPos.x][secondPos.y].flip();
+
+        // But are only visually flipped after some delay
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //TODO check if the view is still available
+                displayCard(firstPos.x, firstPos.y);
+                displayCard(secondPos.x, secondPos.y);
+            }
+        }, 1000);
     }
 
     private void endGame() {

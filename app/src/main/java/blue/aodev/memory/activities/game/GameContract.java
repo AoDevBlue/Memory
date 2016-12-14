@@ -9,6 +9,8 @@ public interface GameContract {
 
     interface View extends BaseView<Presenter> {
 
+        boolean isActive();
+
         void showLoading();
 
         void showLoadingError();

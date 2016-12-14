@@ -74,6 +74,11 @@ public class GameFragment extends Fragment implements GameContract.View {
     }
 
     @Override
+    public boolean isActive() {
+        return isAdded();
+    }
+
+    @Override
     public void showLoading() {
         displayLayout(loadingIndicator);
     }
