@@ -158,5 +158,6 @@ public class GameFragment extends Fragment implements GameContract.View {
     @Override
     public void showScores() {
         startActivity(ScoresActivity.createIntent(getContext()));
+        getActivity().finish();
     }
 }
