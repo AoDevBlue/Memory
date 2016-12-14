@@ -8,6 +8,8 @@
     <!-- Game activity -->
     <string name="activity_game_time">Time: %1$d</string>
     <string name="activity_game_flips">Flips: %1$d</string>
+    <string name="activity_game_loading_error">Could not retrieve data. Check your internet connection and retry.</string>
+    <string name="activity_game_loading_retry">Retry</string>
 
     <!-- Scores activity -->
     <string name="activity_scores_title">Scores</string>

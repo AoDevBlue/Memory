@@ -33,7 +33,9 @@ public interface GameContract {
     interface Presenter extends BasePresenter {
         void selectCard(Card card);
 
-        void retry();
+        void newGame();
+
+        void retryLoading();
 
         // loadState and saveState would be here if we had state to save
     }
