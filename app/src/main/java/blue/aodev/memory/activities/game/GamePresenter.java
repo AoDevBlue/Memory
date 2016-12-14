@@ -4,6 +4,10 @@ import android.graphics.Point;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import blue.aodev.memory.data.api.ApiEndpoints;
 import blue.aodev.memory.data.api.GoalItem;
 import blue.aodev.memory.data.api.GoalResponse;
@@ -82,25 +86,30 @@ public class GamePresenter implements GameContract.Presenter {
         // 6 by 2 for now
         int rowCount = 6;
         int columnCount = 2;
-
-        int targetSize = columnCount*rowCount;
-        itemCount = Math.min(data.getGoalItems().length, targetSize/2);
+        board = new Card[rowCount][columnCount];
         view.setBoardSize(rowCount, columnCount);
 
-        board = new Card[6][4];
+        // Select as many items from the data as possible
+        int targetSize = columnCount*rowCount;
+        itemCount = Math.min(data.getGoalItems().length, targetSize/2);
 
+        // Create the corresponding cards
+        List<Card> cards = new ArrayList<>(itemCount*2);
         for (int i = 0; i < itemCount; i++) {
             GoalItem.Item item = data.getGoalItems()[i].getItem();
-            Card cueCard = new Card(item.getId(), item.getCue().getText(), Card.Type.CUE);
-            Card responseCard =
-                    new Card(item.getId(), item.getResponse().getText(), Card.Type.RESPONSE);
-
-            int cueIndex = 2*i;
-            int responseIndex = 2*i+1;
-            board[cueIndex/columnCount][cueIndex%columnCount] = cueCard;
-            board[responseIndex/columnCount][responseIndex%columnCount] = responseCard;
+            cards.add(new Card(item.getId(), item.getCue().getText(), Card.Type.CUE));
+            cards.add(new Card(item.getId(), item.getResponse().getText(), Card.Type.RESPONSE));
         }
 
+        // Shuffle the cards
+        Collections.shuffle(cards);
+
+        // Fill the board
+        for (int i = 0; i < itemCount*2; i++) {
+            board[i/columnCount][i%columnCount] = cards.get(i);
+        }
+
+        // Display the initial board
         view.showGame();
         displayBoard();
     }
