@@ -23,11 +23,17 @@ public interface GameContract {
 
         void setTime(int time);
 
+        void showScore(int score);
+
+        void showRetry();
+
         void showScores();
     }
 
     interface Presenter extends BasePresenter {
         void selectCard(Card card);
+
+        void retry();
 
         // loadState and saveState would be here if we had state to save
     }

@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import java.util.List;
 
 import blue.aodev.memory.R;
+import blue.aodev.memory.activities.score.ScoresActivity;
 
 public class GameFragment extends Fragment implements GameContract.View {
 
@@ -28,6 +29,12 @@ public class GameFragment extends Fragment implements GameContract.View {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_game, container, false);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        presenter.start();
     }
 
     @Override
@@ -66,7 +73,17 @@ public class GameFragment extends Fragment implements GameContract.View {
     }
 
     @Override
+    public void showScore(int score) {
+
+    }
+
+    @Override
+    public void showRetry() {
+
+    }
+
+    @Override
     public void showScores() {
-        //TODO Launch the scores activity
+        startActivity(ScoresActivity.createIntent(getContext()));
     }
 }

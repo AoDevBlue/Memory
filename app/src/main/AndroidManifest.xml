@@ -17,8 +17,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.game.GameActivity" />
-        <activity android:name=".activities.score.ScoresActivity"></activity>
+        <activity
+            android:name=".activities.game.GameActivity"
+            android:noHistory="true" />
+        <activity
+            android:name=".activities.score.ScoresActivity" />
     </application>
 
 </manifest>
