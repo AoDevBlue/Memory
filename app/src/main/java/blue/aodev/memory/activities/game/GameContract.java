@@ -29,7 +29,9 @@ public interface GameContract {
 
         void setTime(int time);
 
-        void showEndGame(int score);
+        void setScore(int score);
+
+        void showEndGame();
 
         void showScores();
     }
@@ -42,6 +44,8 @@ public interface GameContract {
         void newGame();
 
         void retryLoading();
+
+        void displayHighScores();
 
         // loadState and saveState would be here if we had state to save
     }

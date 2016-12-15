@@ -20,7 +20,8 @@
             android:name=".activities.game.GameActivity"
             android:configChanges="orientation|screenSize" />
         <activity
-            android:name=".activities.score.ScoresActivity" />
+            android:name=".activities.score.ScoresActivity"
+            android:parentActivityName=".activities.main.MainActivity" />
     </application>
 
 </manifest>

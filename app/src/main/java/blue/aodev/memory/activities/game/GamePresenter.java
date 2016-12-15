@@ -48,6 +48,18 @@ public class GamePresenter implements GameContract.Presenter {
     public GamePresenter(@NonNull GameContract.View view) {
         this.view = view;
         view.setPresenter(this);
+        timer = getTimer();
+    }
+
+    private Timer getTimer() {
+        return new Timer(200, new Timer.Listener() {
+            @Override
+            public void onUpdate(long elapsedTimeMs) {
+                int elaspedTime = (int) (elapsedTimeMs/1000);
+                view.setTime(elaspedTime);
+                view.setScore(computeScore(elaspedTime, flipCount));
+            }
+        });
     }
 
     @Override
@@ -122,12 +134,6 @@ public class GamePresenter implements GameContract.Presenter {
         view.setTime(0);
 
         // Start the timer
-        timer = new Timer(200, new Timer.Listener() {
-            @Override
-            public void onUpdate(long elapsedTimeMs) {
-                view.setTime((int) (elapsedTimeMs/1000));
-            }
-        });
         timer.start();
     }
 
@@ -200,6 +206,11 @@ public class GamePresenter implements GameContract.Presenter {
                 }
             }
         }
+    }
+
+    @Override
+    public void displayHighScores() {
+        view.showScores();
     }
 
     @Override
@@ -279,9 +290,29 @@ public class GamePresenter implements GameContract.Presenter {
     }
 
     private void endGame() {
-        view.showScores();
         timer.stop();
-        int totalTime = (int) (timer.getTotalTime() / 1000);
-        //TODO compute the score
+        int totalTime = (int) (timer.getTotalTime()/1000);
+        int finalScore = computeScore(totalTime, flipCount);
+
+        view.setScore(finalScore);
+        view.showEndGame();
+    }
+
+    /**
+     * Compute the score.
+     * @param time the time spent, in seconds.
+     * @param flips the number of flips.
+     * @return the score.
+     */
+    private int computeScore(int time, int flips) {
+        int timeDecrement = 1;
+        int flipDecrement = 10;
+        int bestFlipCount = itemCount*2; // The lowest possible number of flips
+
+        int score = bestFlipCount*3*flipDecrement;
+        score -= time*timeDecrement;
+        score -= flips*flipDecrement;
+        score *= 100; // People like big numbers
+        return Math.max(score, 0);
     }
 }

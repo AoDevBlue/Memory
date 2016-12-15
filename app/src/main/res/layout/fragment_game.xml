@@ -66,6 +66,7 @@
         android:id="@+id/game_status_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:elevation="@dimen/game_status_elevation"
         android:clipToPadding="true"
         android:background="@color/bottom_sheet_color"
         app:layout_behavior="android.support.design.widget.BottomSheetBehavior">

@@ -4,4 +4,5 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
 
     <dimen name="collapsed_game_control_height">50dp</dimen>
+    <dimen name="game_status_elevation">3dp</dimen> <!-- Above the game cards -->
 </resources>

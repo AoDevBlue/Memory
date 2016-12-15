@@ -31,6 +31,9 @@ public class GameFragment extends Fragment implements GameContract.View {
     @BindView(R.id.game_status_layout) View gameStatusLayout;
     @BindView(R.id.time_count) TextView timeCountView;
     @BindView(R.id.flip_count) TextView flipCountView;
+    @BindView(R.id.score) TextView scoreView;
+    @BindView(R.id.game_retry_button) Button retryGameButton;
+    @BindView(R.id.high_scores_button) Button highScoresButton;
 
     private BottomSheetBehavior bottomSheetBehavior;
 
@@ -53,6 +56,20 @@ public class GameFragment extends Fragment implements GameContract.View {
             @Override
             public void onClick(View v) {
                 presenter.retryLoading();
+            }
+        });
+
+        retryGameButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                presenter.newGame();
+            }
+        });
+
+        highScoresButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                presenter.displayHighScores();
             }
         });
 
@@ -103,6 +120,7 @@ public class GameFragment extends Fragment implements GameContract.View {
         hideAll();
         gameBoardLayout.setVisibility(View.VISIBLE);
         gameStatusLayout.setVisibility(View.VISIBLE);
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
     }
 
     private void hideAll() {
@@ -167,13 +185,17 @@ public class GameFragment extends Fragment implements GameContract.View {
     }
 
     @Override
-    public void showEndGame(int score) {
+    public void setScore(int score) {
+        scoreView.setText(getString(R.string.activity_game_score, score));
+    }
 
+    @Override
+    public void showEndGame() {
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
     }
 
     @Override
     public void showScores() {
         startActivity(ScoresActivity.createIntent(getContext()));
-        getActivity().finish();
     }
 }

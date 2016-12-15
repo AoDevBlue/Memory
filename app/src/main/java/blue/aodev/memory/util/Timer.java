@@ -27,12 +27,10 @@ public class Timer {
     private long lastTime;
 
     private final int updateRateMs;
-    private Listener listener;
 
 
     public Timer(final int updateRateMs, @NonNull final Listener listener) {
         this.updateRateMs = updateRateMs;
-        this.listener = listener;
 
         handler = new Handler();
         runnable = new Runnable() {
@@ -43,7 +41,9 @@ public class Timer {
                 lastTime = currentTime;
                 listener.onUpdate(elapsedTime);
 
-                handler.postDelayed(this, updateRateMs);
+                if (state == State.STARTED) {
+                    handler.postDelayed(this, updateRateMs);
+                }
             }
         };
     }
@@ -80,7 +80,7 @@ public class Timer {
     }
 
     public void stop() {
-        if (state == State.STARTED) {
+        if (state == State.STOPPED) {
             return;
         }
         handler.removeCallbacks(runnable);
