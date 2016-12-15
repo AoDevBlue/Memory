@@ -76,6 +76,9 @@ public class GamePresenter implements GameContract.Presenter {
         loadData();
     }
 
+    /**
+     * Load the data needed to create a new game and creates one
+     */
     private void loadData() {
         view.showLoading();
 
@@ -103,6 +106,9 @@ public class GamePresenter implements GameContract.Presenter {
         });
     }
 
+    /**
+     * Create a new game by selecting cards and displaying them.
+     */
     @Override
     public void newGame() {
         createBoard();
@@ -111,6 +117,7 @@ public class GamePresenter implements GameContract.Presenter {
         // Display the initial state
         view.showGame();
         displayBoard();
+        displayCardType();
         view.setFlipCount(flipCount);
         view.setTime(0);
 
@@ -124,6 +131,9 @@ public class GamePresenter implements GameContract.Presenter {
         timer.start();
     }
 
+    /**
+     * Prepare the board by selecting cards.
+     */
     private void createBoard() {
         // The size is not dynamic currently
         int rowCount = 6;
@@ -152,6 +162,9 @@ public class GamePresenter implements GameContract.Presenter {
         }
     }
 
+    /**
+     * Display all the cards of the board.
+     */
     private void displayBoard() {
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[i].length; j++) {
@@ -160,15 +173,32 @@ public class GamePresenter implements GameContract.Presenter {
         }
     }
 
+    /**
+     * Display a card.
+     */
     private void displayCard(int row, int column) {
         Card card = board[row][column];
         if (card == null) {
             return;
         }
         if (card.isFlipped()) {
-            view.showCard(row, column, card.getType(), card.getText());
+            view.showCard(row, column, card.getText());
         } else {
-            view.hideCard(row, column, card.getType());
+            view.hideCard(row, column);
+        }
+    }
+
+    /**
+     * Display the type of a card.
+     */
+    private void displayCardType() {
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[i].length; j++) {
+                Card card = board[i][j];
+                if (card != null) {
+                    view.setCardType(i, j, card.getType());
+                }
+            }
         }
     }
 
@@ -235,9 +265,15 @@ public class GamePresenter implements GameContract.Presenter {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                //TODO check if the view is still available
-                displayCard(firstPos.x, firstPos.y);
-                displayCard(secondPos.x, secondPos.y);
+                if (view.isActive()) {
+                    // No need to display them if they have been flipped since
+                    if (!board[firstPos.x][firstPos.y].isFlipped()) {
+                        displayCard(firstPos.x, firstPos.y);
+                    }
+                    if (!board[secondPos.x][secondPos.y].isFlipped()) {
+                        displayCard(secondPos.x, secondPos.y);
+                    }
+                }
             }
         }, 1000);
     }
@@ -245,7 +281,7 @@ public class GamePresenter implements GameContract.Presenter {
     private void endGame() {
         view.showScores();
         timer.stop();
-        int totalTime = (int) timer.getTotalTime();
+        int totalTime = (int) (timer.getTotalTime() / 1000);
         //TODO compute the score
     }
 }

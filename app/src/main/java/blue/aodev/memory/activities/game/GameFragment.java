@@ -94,11 +94,6 @@ public class GameFragment extends Fragment implements GameContract.View {
     }
 
     @Override
-    public float getBoardAspectRatio() {
-        return gameBoardLayout.getWidth() / gameBoardLayout.getHeight();
-    }
-
-    @Override
     public void setBoardSize(int rowCount, final int columnCount) {
         gameBoardLayout.removeAllViews();
         gameBoardLayout.setColumnCount(columnCount);
@@ -120,17 +115,21 @@ public class GameFragment extends Fragment implements GameContract.View {
     }
 
     @Override
-    public void hideCard(int row, int column, @NonNull Card.Type type) {
+    public void hideCard(int row, int column) {
         CardView cardView = getCardView(row, column);
-        cardView.setType(type);
         cardView.setText("");
     }
 
     @Override
-    public void showCard(int row, int column, @NonNull Card.Type type, @NonNull String text) {
+    public void showCard(int row, int column, @NonNull String text) {
+        CardView cardView = getCardView(row, column);
+        cardView.setText(text);
+    }
+
+    @Override
+    public void setCardType(int row, int column, @NonNull Card.Type type) {
         CardView cardView = getCardView(row, column);
         cardView.setType(type);
-        cardView.setText(text);
     }
 
     private CardView getCardView(int row, int column) {
@@ -157,12 +156,7 @@ public class GameFragment extends Fragment implements GameContract.View {
     }
 
     @Override
-    public void showScore(int score) {
-
-    }
-
-    @Override
-    public void showRetry() {
+    public void showEndGame(int score) {
 
     }
 

@@ -17,21 +17,19 @@ public interface GameContract {
 
         void showGame();
 
-        float getBoardAspectRatio();
-
         void setBoardSize(int rowCount, int columnCount);
 
-        void hideCard(int row, int column, @NonNull Card.Type type);
+        void hideCard(int row, int column);
 
-        void showCard(int row, int column, @NonNull Card.Type type, @NonNull String text);
+        void showCard(int row, int column, @NonNull String text);
+
+        void setCardType(int row, int column, @NonNull Card.Type type);
 
         void setFlipCount(int flipCount);
 
         void setTime(int time);
 
-        void showScore(int score);
-
-        void showRetry();
+        void showEndGame(int score);
 
         void showScores();
     }
