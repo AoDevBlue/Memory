@@ -3,7 +3,7 @@ package blue.aodev.memory.activities.game;
 import android.support.annotation.NonNull;
 
 /**
- * A card on the game board.
+ * A card of the memory board.
  */
 public class Card {
 

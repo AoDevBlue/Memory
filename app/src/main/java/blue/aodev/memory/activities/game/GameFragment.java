@@ -18,6 +18,9 @@ import butterknife.ButterKnife;
 import blue.aodev.memory.R;
 import blue.aodev.memory.activities.score.ScoresActivity;
 
+/**
+ * A {@link Fragment} that acts as the view of the game activity.
+ */
 public class GameFragment extends Fragment implements GameContract.View {
 
     private GameContract.Presenter presenter;

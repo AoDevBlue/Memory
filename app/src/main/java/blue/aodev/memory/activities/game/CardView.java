@@ -14,6 +14,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import blue.aodev.memory.R;
 
+/**
+ * A view for a card of the memory game.
+ */
 public class CardView extends android.support.v7.widget.CardView {
 
     @BindColor(R.color.cardColorCue) int cueColor;
@@ -48,6 +51,10 @@ public class CardView extends android.support.v7.widget.CardView {
         textView.setVisibility(INVISIBLE);
     }
 
+    /**
+     * Update the view according to the data.
+     * @param cardInfo the data to display.
+     */
     public void setCardInfo(@NonNull GameContract.CardInfo cardInfo) {
         GameContract.CardInfo oldCardInfo = this.cardInfo;
         this.cardInfo = cardInfo;
@@ -79,6 +86,10 @@ public class CardView extends android.support.v7.widget.CardView {
         }
     }
 
+    /**
+     * Animate the flip of the card.
+     * The text visibility is updated at the middle of the animation.
+     */
     public void updateFlipped() {
         final boolean showText = cardInfo.flipped;
         float start = cardInfo.flipped ? 180 : 0;

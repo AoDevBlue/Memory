@@ -13,6 +13,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import blue.aodev.memory.R;
 
+/**
+ * A {@link RecyclerView.Adapter} to display scores.
+ */
 public class ScoreAdapter extends RecyclerView.Adapter<ScoreAdapter.ViewHolder> {
 
     private List<Integer> scores;

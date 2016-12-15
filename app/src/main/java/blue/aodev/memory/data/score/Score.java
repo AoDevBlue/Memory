@@ -3,6 +3,9 @@ package blue.aodev.memory.data.score;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+/**
+ * A score, stored using ORMLite.
+ */
 @DatabaseTable(tableName = "score")
 public class Score {
 

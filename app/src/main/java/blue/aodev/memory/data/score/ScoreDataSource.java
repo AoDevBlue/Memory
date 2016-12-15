@@ -4,6 +4,9 @@ import android.support.annotation.NonNull;
 
 import java.util.List;
 
+/**
+ * A data source for scores.
+ */
 public interface ScoreDataSource {
 
     @NonNull List<Integer> getScores();

@@ -13,6 +13,9 @@ import blue.aodev.memory.data.score.ScoreOrmLiteSource;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+/**
+ * {@link AppCompatActivity} for the Memory game.
+ */
 public class GameActivity extends AppCompatActivity {
 
     public static Intent createIntent(Context context) {

@@ -1,5 +1,8 @@
 package blue.aodev.memory.data.goal;
 
+/**
+ * A goal item, from the goals API.
+ */
 public class GoalItem {
     private Item item;
 

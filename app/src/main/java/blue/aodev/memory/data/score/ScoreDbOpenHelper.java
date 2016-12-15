@@ -12,6 +12,9 @@ import com.j256.ormlite.table.TableUtils;
 
 import java.sql.SQLException;
 
+/**
+ * Helper for the score database.
+ */
 public class ScoreDbOpenHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String TAG = "ScoreDbOpenHelper";

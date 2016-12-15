@@ -11,6 +11,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * A {@link ScoreDataSource} using the {@link ScoreDbOpenHelper}.
+ */
 public class ScoreOrmLiteSource implements ScoreDataSource {
 
     private static final String TAG = "ScoreORMLiteSource";

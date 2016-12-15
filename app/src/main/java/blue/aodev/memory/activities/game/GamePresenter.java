@@ -19,6 +19,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+/**
+ * Presenter of the game activity.
+ */
 public class GamePresenter implements GameContract.Presenter {
 
     private static final int GOAL_ID = 470272;

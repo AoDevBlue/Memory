@@ -46,6 +46,9 @@ public interface GameContract {
         // loadState and saveState would be here if we had state to save
     }
 
+    /**
+     * Value class used to pass data between the {@link Presenter} and the {@link View}.
+     */
     class CardInfo {
         public final Card.Type type;
         public final String text;

@@ -11,6 +11,9 @@ import blue.aodev.memory.R;
 import blue.aodev.memory.activities.game.GameActivity;
 import blue.aodev.memory.activities.score.ScoresActivity;
 
+/**
+ * Starting activity that display a basic menu.
+ */
 public class MainActivity extends AppCompatActivity {
     @BindView(R.id.new_game_button) Button newGameButton;
     @BindView(R.id.high_scores_button) Button highScoresButton;
