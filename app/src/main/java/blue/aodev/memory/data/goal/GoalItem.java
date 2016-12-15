@@ -1,4 +1,4 @@
-package blue.aodev.memory.data.api;
+package blue.aodev.memory.data.goal;
 
 public class GoalItem {
     private Item item;

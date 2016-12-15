@@ -1,4 +1,4 @@
-package blue.aodev.memory.data.local;
+package blue.aodev.memory.data.score;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

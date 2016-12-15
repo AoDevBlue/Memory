@@ -5,19 +5,16 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import blue.aodev.memory.data.api.ApiEndpoints;
-import blue.aodev.memory.data.api.GoalItem;
-import blue.aodev.memory.data.api.GoalResponse;
-import blue.aodev.memory.data.local.ScoreDataSource;
+import blue.aodev.memory.data.goal.GoalService;
+import blue.aodev.memory.data.goal.GoalItem;
+import blue.aodev.memory.data.goal.Goal;
+import blue.aodev.memory.data.score.ScoreDataSource;
 import blue.aodev.memory.util.Timer;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class GamePresenter implements GameContract.Presenter {
 
@@ -27,8 +24,10 @@ public class GamePresenter implements GameContract.Presenter {
 
     private ScoreDataSource scoreDataSource;
 
+    private GoalService goalService;
+
     /** The data of the GOAL_ID goal from the iKnow API **/
-    private GoalResponse data;
+    private Goal data;
 
     /** The state of the board **/
     private Card[][] board;
@@ -49,10 +48,13 @@ public class GamePresenter implements GameContract.Presenter {
     private int flipCount;
 
     public GamePresenter(@NonNull GameContract.View view,
+                         @NonNull GoalService goalService,
                          @NonNull ScoreDataSource scoreDataSource) {
         this.view = view;
         view.setPresenter(this);
+        this.goalService = goalService;
         this.scoreDataSource = scoreDataSource;
+
         timer = getTimer();
     }
 
@@ -99,17 +101,10 @@ public class GamePresenter implements GameContract.Presenter {
     private void loadData() {
         view.showLoading();
 
-        //FIXME this logic should be in a separate class
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(ApiEndpoints.BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        ApiEndpoints apiService = retrofit.create(ApiEndpoints.class);
-        Call<GoalResponse> call = apiService.getGoal(GOAL_ID);
-        call.enqueue(new Callback<GoalResponse>() {
+        Call<Goal> call = goalService.getGoal(GOAL_ID);
+        call.enqueue(new Callback<Goal>() {
             @Override
-            public void onResponse(Call<GoalResponse> call, Response<GoalResponse> response) {
+            public void onResponse(Call<Goal> call, Response<Goal> response) {
                 data = response.body();
                 if (view.isActive()) {
                     newGame();
@@ -117,7 +112,7 @@ public class GamePresenter implements GameContract.Presenter {
             }
 
             @Override
-            public void onFailure(Call<GoalResponse> call, Throwable t) {
+            public void onFailure(Call<Goal> call, Throwable t) {
                 view.showLoadingError();
             }
         });

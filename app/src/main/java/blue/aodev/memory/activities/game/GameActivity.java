@@ -7,8 +7,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import blue.aodev.memory.R;
-import blue.aodev.memory.data.local.ScoreDataSource;
-import blue.aodev.memory.data.local.ScoreOrmLiteSource;
+import blue.aodev.memory.data.goal.GoalService;
+import blue.aodev.memory.data.score.ScoreDataSource;
+import blue.aodev.memory.data.score.ScoreOrmLiteSource;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class GameActivity extends AppCompatActivity {
 
@@ -34,8 +37,13 @@ public class GameActivity extends AppCompatActivity {
         }
 
         // Create the presenter
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(GoalService.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        GoalService goalService = retrofit.create(GoalService.class);
         scoreDataSource = new ScoreOrmLiteSource(this);
-        GamePresenter presenter = new GamePresenter(gameFragment, scoreDataSource);
+        GamePresenter presenter = new GamePresenter(gameFragment, goalService, scoreDataSource);
     }
 
     @Override
