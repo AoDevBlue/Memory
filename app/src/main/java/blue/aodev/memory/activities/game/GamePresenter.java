@@ -1,5 +1,6 @@
 package blue.aodev.memory.activities.game;
 
+import android.content.Context;
 import android.graphics.Point;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -8,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import blue.aodev.memory.R;
 import blue.aodev.memory.data.goal.GoalService;
 import blue.aodev.memory.data.goal.GoalItem;
 import blue.aodev.memory.data.goal.Goal;
@@ -48,13 +50,20 @@ public class GamePresenter implements GameContract.Presenter {
     /** Number of flips made **/
     private int flipCount;
 
-    public GamePresenter(@NonNull GameContract.View view,
+    private final int ROW_COUNT;
+    private final int COLUMN_COUNT;
+
+    public GamePresenter(@NonNull Context context,
+                         @NonNull GameContract.View view,
                          @NonNull GoalService goalService,
                          @NonNull ScoreDataSource scoreDataSource) {
         this.view = view;
         view.setPresenter(this);
         this.goalService = goalService;
         this.scoreDataSource = scoreDataSource;
+
+        COLUMN_COUNT = context.getResources().getInteger(R.integer.game_column_count);
+        ROW_COUNT = context.getResources().getInteger(R.integer.game_row_count);
 
         timer = getTimer();
     }
@@ -143,14 +152,12 @@ public class GamePresenter implements GameContract.Presenter {
      * Prepare the board by selecting cards.
      */
     private void createBoard() {
-        // The size is not dynamic currently
-        int rowCount = 5;
-        int columnCount = 4;
-        board = new Card[rowCount][columnCount];
-        view.setBoardSize(rowCount, columnCount);
+        // Create the board structure
+        board = new Card[ROW_COUNT][COLUMN_COUNT];
+        view.setBoardSize(ROW_COUNT, COLUMN_COUNT);
 
         // Select as many items from the data as possible
-        int targetSize = columnCount*rowCount;
+        int targetSize = ROW_COUNT*COLUMN_COUNT;
         itemCount = Math.min(data.getGoalItems().length, targetSize/2);
 
         // Create the corresponding cards
@@ -166,7 +173,7 @@ public class GamePresenter implements GameContract.Presenter {
 
         // Fill the board
         for (int i = 0; i < itemCount*2; i++) {
-            board[i/columnCount][i%columnCount] = cards.get(i);
+            board[i/COLUMN_COUNT][i%COLUMN_COUNT] = cards.get(i);
         }
     }
 

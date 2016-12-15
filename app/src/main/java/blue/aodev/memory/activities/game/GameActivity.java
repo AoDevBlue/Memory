@@ -43,7 +43,7 @@ public class GameActivity extends AppCompatActivity {
                 .build();
         GoalService goalService = retrofit.create(GoalService.class);
         scoreDataSource = new ScoreOrmLiteSource(this);
-        GamePresenter presenter = new GamePresenter(gameFragment, goalService, scoreDataSource);
+        new GamePresenter(this, gameFragment, goalService, scoreDataSource);
     }
 
     @Override
