@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import blue.aodev.memory.data.goal.GoalService;
@@ -161,8 +162,7 @@ public class GamePresenter implements GameContract.Presenter {
         }
 
         // Shuffle the cards
-        //TODO shuffle again
-        //Collections.shuffle(cards);
+        Collections.shuffle(cards);
 
         // Fill the board
         for (int i = 0; i < itemCount*2; i++) {
