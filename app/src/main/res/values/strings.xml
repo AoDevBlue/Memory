@@ -6,10 +6,13 @@
     <string name="activity_main_scores">High scores</string>
 
     <!-- Game activity -->
-    <string name="activity_game_time">Time: %1$d</string>
-    <string name="activity_game_flips">Flips: %1$d</string>
     <string name="activity_game_loading_error">Could not retrieve data. Check your internet connection and retry.</string>
     <string name="activity_game_loading_retry">Retry</string>
+    <string name="activity_game_time">Time: %1$d</string>
+    <string name="activity_game_flips">Flips: %1$d</string>
+    <string name="activity_game_retry">Retry</string>
+    <string name="activity_game_score">Score: %1$d</string>
+    <string name="activity_game_high_scores">High scores</string>
 
     <!-- Scores activity -->
     <string name="activity_scores_title">Scores</string>

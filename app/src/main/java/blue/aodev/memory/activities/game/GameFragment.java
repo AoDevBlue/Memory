@@ -3,6 +3,7 @@ package blue.aodev.memory.activities.game;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,10 +27,12 @@ public class GameFragment extends Fragment implements GameContract.View {
     @BindView(R.id.retry_loading_button) Button retryLoadingButton;
     @BindView(R.id.error_layout) View errorLayout;
 
-    @BindView(R.id.game_layout) View gameLayout;
     @BindView(R.id.game_board_layout) GridLayout gameBoardLayout;
+    @BindView(R.id.game_status_layout) View gameStatusLayout;
     @BindView(R.id.time_count) TextView timeCountView;
     @BindView(R.id.flip_count) TextView flipCountView;
+
+    private BottomSheetBehavior bottomSheetBehavior;
 
 
     public GameFragment() {
@@ -52,6 +55,11 @@ public class GameFragment extends Fragment implements GameContract.View {
                 presenter.retryLoading();
             }
         });
+
+        bottomSheetBehavior = BottomSheetBehavior.from(gameStatusLayout);
+        int peekHeight = (int) getResources().getDimension(R.dimen.collapsed_game_control_height);
+        bottomSheetBehavior.setPeekHeight(peekHeight);
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
 
         return view;
     }
@@ -80,17 +88,28 @@ public class GameFragment extends Fragment implements GameContract.View {
 
     @Override
     public void showLoading() {
-        displayLayout(loadingIndicator);
+        hideAll();
+        loadingIndicator.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void showLoadingError() {
-        displayLayout(errorLayout);
+        hideAll();
+        errorLayout.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void showGame() {
-        displayLayout(gameLayout);
+        hideAll();
+        gameBoardLayout.setVisibility(View.VISIBLE);
+        gameStatusLayout.setVisibility(View.VISIBLE);
+    }
+
+    private void hideAll() {
+        loadingIndicator.setVisibility(View.INVISIBLE);
+        errorLayout.setVisibility(View.INVISIBLE);
+        gameBoardLayout.setVisibility(View.INVISIBLE);
+        gameStatusLayout.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -135,14 +154,6 @@ public class GameFragment extends Fragment implements GameContract.View {
     private CardView getCardView(int row, int column) {
         int childIndex = row * gameBoardLayout.getColumnCount() + column;
         return (CardView) gameBoardLayout.getChildAt(childIndex);
-    }
-
-    private void displayLayout(View layout) {
-        loadingIndicator.setVisibility(View.INVISIBLE);
-        errorLayout.setVisibility(View.INVISIBLE);
-        gameLayout.setVisibility(View.INVISIBLE);
-
-        layout.setVisibility(View.VISIBLE);
     }
 
     @Override
