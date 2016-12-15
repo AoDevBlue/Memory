@@ -303,10 +303,15 @@ public class GamePresenter implements GameContract.Presenter {
         int flipDecrement = 10;
         int bestFlipCount = itemCount*2; // The lowest possible number of flips
 
-        int score = bestFlipCount*3*flipDecrement;
+        int score = bestFlipCount*2*flipDecrement;
         score -= time*timeDecrement;
-        score -= flips*flipDecrement;
+        score -= Math.max(0, flips - bestFlipCount)*flipDecrement;
         score *= 100; // People like big numbers
-        return Math.max(score, 0);
+
+        // Don't go below 100 and use another formula if the user
+        // takes too many flips or time
+        int minScore = Math.max(500 - time, 100);
+
+        return Math.max(score, minScore);
     }
 }
