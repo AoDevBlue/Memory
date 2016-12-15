@@ -47,7 +47,7 @@ public class GameActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStop() {
+    protected void onDestroy() {
         super.onStop();
         scoreDataSource.close();
     }
