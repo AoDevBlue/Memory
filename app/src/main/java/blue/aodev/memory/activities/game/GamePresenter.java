@@ -297,7 +297,6 @@ public class GamePresenter implements GameContract.Presenter {
         int finalScore = computeScore(totalTime, flipCount);
 
         scoreDataSource.addScore(finalScore);
-        scoreDataSource.getScores();
 
         view.setScore(finalScore);
         view.showEndGame();
