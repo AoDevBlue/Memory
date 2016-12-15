@@ -7,12 +7,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import blue.aodev.memory.R;
+import blue.aodev.memory.data.local.ScoreDataSource;
+import blue.aodev.memory.data.local.ScoreOrmLiteSource;
 
 public class GameActivity extends AppCompatActivity {
 
     public static Intent createIntent(Context context) {
         return new Intent(context, GameActivity.class);
     }
+
+    private ScoreDataSource scoreDataSource;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +34,13 @@ public class GameActivity extends AppCompatActivity {
         }
 
         // Create the presenter
-        GamePresenter presenter = new GamePresenter(gameFragment);
+        scoreDataSource = new ScoreOrmLiteSource(this);
+        GamePresenter presenter = new GamePresenter(gameFragment, scoreDataSource);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        scoreDataSource.close();
     }
 }

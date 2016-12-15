@@ -11,6 +11,7 @@ import java.util.List;
 import blue.aodev.memory.data.api.ApiEndpoints;
 import blue.aodev.memory.data.api.GoalItem;
 import blue.aodev.memory.data.api.GoalResponse;
+import blue.aodev.memory.data.local.ScoreDataSource;
 import blue.aodev.memory.util.Timer;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -23,6 +24,8 @@ public class GamePresenter implements GameContract.Presenter {
     private static final int GOAL_ID = 470272;
 
     private GameContract.View view;
+
+    private ScoreDataSource scoreDataSource;
 
     /** The data of the GOAL_ID goal from the iKnow API **/
     private GoalResponse data;
@@ -45,9 +48,11 @@ public class GamePresenter implements GameContract.Presenter {
     /** Number of flips made **/
     private int flipCount;
 
-    public GamePresenter(@NonNull GameContract.View view) {
+    public GamePresenter(@NonNull GameContract.View view,
+                         @NonNull ScoreDataSource scoreDataSource) {
         this.view = view;
         view.setPresenter(this);
+        this.scoreDataSource = scoreDataSource;
         timer = getTimer();
     }
 
@@ -125,6 +130,7 @@ public class GamePresenter implements GameContract.Presenter {
     public void newGame() {
         createBoard();
         flipCount = 0;
+        matchedItemCount = 0;
 
         // Display the initial state
         view.showGame();
@@ -160,7 +166,8 @@ public class GamePresenter implements GameContract.Presenter {
         }
 
         // Shuffle the cards
-        Collections.shuffle(cards);
+        //TODO shuffle again
+        //Collections.shuffle(cards);
 
         // Fill the board
         for (int i = 0; i < itemCount*2; i++) {
@@ -293,6 +300,9 @@ public class GamePresenter implements GameContract.Presenter {
         timer.stop();
         int totalTime = (int) (timer.getTotalTime()/1000);
         int finalScore = computeScore(totalTime, flipCount);
+
+        scoreDataSource.addScore(finalScore);
+        scoreDataSource.getScores();
 
         view.setScore(finalScore);
         view.showEndGame();
