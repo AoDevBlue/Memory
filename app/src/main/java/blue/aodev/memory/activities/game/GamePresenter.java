@@ -144,8 +144,8 @@ public class GamePresenter implements GameContract.Presenter {
      */
     private void createBoard() {
         // The size is not dynamic currently
-        int rowCount = 6;
-        int columnCount = 2;
+        int rowCount = 5;
+        int columnCount = 4;
         board = new Card[rowCount][columnCount];
         view.setBoardSize(rowCount, columnCount);
 
