@@ -19,11 +19,7 @@ public interface GameContract {
 
         void setBoardSize(int rowCount, int columnCount);
 
-        void hideCard(int row, int column);
-
-        void showCard(int row, int column, @NonNull String text);
-
-        void setCardType(int row, int column, @NonNull Card.Type type);
+        void showCard(int row, int column, @NonNull CardInfo cardInfo);
 
         void setFlipCount(int flipCount);
 
@@ -48,5 +44,17 @@ public interface GameContract {
         void displayHighScores();
 
         // loadState and saveState would be here if we had state to save
+    }
+
+    class CardInfo {
+        public final Card.Type type;
+        public final String text;
+        public final boolean flipped;
+
+        public CardInfo(@NonNull Card.Type type, @NonNull String text, boolean flipped) {
+            this.type = type;
+            this.text = text;
+            this.flipped = flipped;
+        }
     }
 }

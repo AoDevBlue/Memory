@@ -152,21 +152,9 @@ public class GameFragment extends Fragment implements GameContract.View {
     }
 
     @Override
-    public void hideCard(int row, int column) {
+    public void showCard(int row, int column, @NonNull GameContract.CardInfo cardInfo) {
         CardView cardView = getCardView(row, column);
-        cardView.setText("");
-    }
-
-    @Override
-    public void showCard(int row, int column, @NonNull String text) {
-        CardView cardView = getCardView(row, column);
-        cardView.setText(text);
-    }
-
-    @Override
-    public void setCardType(int row, int column, @NonNull Card.Type type) {
-        CardView cardView = getCardView(row, column);
-        cardView.setType(type);
+        cardView.setCardInfo(cardInfo);
     }
 
     private CardView getCardView(int row, int column) {

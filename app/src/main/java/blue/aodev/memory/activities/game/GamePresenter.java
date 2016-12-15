@@ -140,7 +140,6 @@ public class GamePresenter implements GameContract.Presenter {
         // Display the initial state
         view.showGame();
         displayBoard();
-        displayCardType();
         view.setFlipCount(flipCount);
         view.setTime(0);
 
@@ -196,25 +195,9 @@ public class GamePresenter implements GameContract.Presenter {
         if (card == null) {
             return;
         }
-        if (card.isFlipped()) {
-            view.showCard(row, column, card.getText());
-        } else {
-            view.hideCard(row, column);
-        }
-    }
-
-    /**
-     * Display the type of a card.
-     */
-    private void displayCardType() {
-        for (int i = 0; i < board.length; i++) {
-            for (int j = 0; j < board[i].length; j++) {
-                Card card = board[i][j];
-                if (card != null) {
-                    view.setCardType(i, j, card.getType());
-                }
-            }
-        }
+        GameContract.CardInfo cardInfo =
+                new GameContract.CardInfo(card.getType(), card.getText(), card.isFlipped());
+        view.showCard(row, column, cardInfo);
     }
 
     @Override

@@ -1,8 +1,12 @@
 package blue.aodev.memory.activities.game;
 
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
+import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.TextView;
 
 import butterknife.BindColor;
@@ -15,6 +19,8 @@ public class CardView extends android.support.v7.widget.CardView {
     @BindColor(R.color.cardColorCue) int cueColor;
     @BindColor(R.color.cardColorResponse) int responseColor;
     @BindView(R.id.text) TextView textView;
+
+    private GameContract.CardInfo cardInfo;
 
     public CardView(Context context) {
         super(context);
@@ -34,14 +40,35 @@ public class CardView extends android.support.v7.widget.CardView {
     private void init() {
         inflate(getContext(), R.layout.game_card_contents, this);
         ButterKnife.bind(this);
+
+        cardInfo = new GameContract.CardInfo(Card.Type.CUE, "", false);
+        updateText();
+        updateType();
+        setRotationY(180f);
+        textView.setVisibility(INVISIBLE);
     }
 
-    public void setText(@NonNull String text) {
-        textView.setText(text);
+    public void setCardInfo(@NonNull GameContract.CardInfo cardInfo) {
+        GameContract.CardInfo oldCardInfo = this.cardInfo;
+        this.cardInfo = cardInfo;
+
+        if (!oldCardInfo.text.equals(cardInfo.text)) {
+            updateText();
+        }
+        if (oldCardInfo.type != cardInfo.type) {
+            updateType();
+        }
+        if (oldCardInfo.flipped != cardInfo.flipped) {
+            updateFlipped();
+        }
     }
 
-    public void setType(Card.Type type) {
-        switch (type) {
+    private void updateText() {
+        textView.setText(cardInfo.text);
+    }
+
+    public void updateType() {
+        switch (cardInfo.type) {
             case CUE:
                 setBackgroundColor(cueColor);
                 break;
@@ -50,5 +77,26 @@ public class CardView extends android.support.v7.widget.CardView {
                 setBackgroundColor(responseColor);
                 break;
         }
+    }
+
+    public void updateFlipped() {
+        final boolean showText = cardInfo.flipped;
+        float start = cardInfo.flipped ? 180 : 0;
+        float end = cardInfo.flipped ? 0 : 180;
+
+        final ObjectAnimator anim = ObjectAnimator.ofFloat(this, "rotationY", start, end);
+        anim.setInterpolator(new AccelerateDecelerateInterpolator());
+        anim.setDuration(200);
+        anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                if (animation.getAnimatedFraction() > 0.5f) {
+                    int visibility = showText ? View.VISIBLE : View.INVISIBLE;
+                    textView.setVisibility(visibility);
+                    anim.removeUpdateListener(this);
+                }
+            }
+        });
+        anim.start();
     }
 }
