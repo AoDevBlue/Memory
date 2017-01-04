@@ -1,6 +1,9 @@
 package blue.aodev.memory.data.score;
 
+import android.content.Context;
+import android.content.Loader;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.util.List;
 
@@ -9,7 +12,9 @@ import java.util.List;
  */
 public interface ScoreDataSource {
 
-    @NonNull List<Integer> getScores();
+    @NonNull List<Score> getScores();
+
+    @Nullable Loader<List<Score>> getScoresLoader(@NonNull Context context);
 
     void addScore(int score);
 
