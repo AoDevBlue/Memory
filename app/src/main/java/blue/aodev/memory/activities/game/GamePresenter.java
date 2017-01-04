@@ -91,10 +91,10 @@ public class GamePresenter implements GameContract.Presenter, Game.FlipListener 
         return new Timer(200, new Timer.Listener() {
             @Override
             public void onUpdate(long elapsedTimeMs) {
-                int elaspedTime = (int) (elapsedTimeMs/1000);
-                view.setTime(elaspedTime);
+                int elapsedTime = (int) (elapsedTimeMs/1000);
+                view.setTime(elapsedTime);
                 int flipCount = game != null ? game.getFlipCount() : 0;
-                view.setScore(computeScore(elaspedTime, flipCount));
+                view.setScore(computeScore(elapsedTime, flipCount));
             }
         });
     }
@@ -108,7 +108,11 @@ public class GamePresenter implements GameContract.Presenter, Game.FlipListener 
                 newGame();
             }
         } else {
-            timer.start();
+            if (!game.isOver()) {
+                timer.start();
+            } else {
+                displayEndGame(computeScore());
+            }
             if (firstStart) {
                 displayInitialState();
             }
@@ -156,6 +160,7 @@ public class GamePresenter implements GameContract.Presenter, Game.FlipListener 
     public void newGame() {
         createGame();
         displayInitialState();
+        timer.reset();
         timer.start();
     }
 
@@ -164,7 +169,11 @@ public class GamePresenter implements GameContract.Presenter, Game.FlipListener 
         view.setBoardSize(ROW_COUNT, COLUMN_COUNT);
         displayBoard();
         view.setFlipCount(game.getFlipCount());
-        view.setTime(0);
+        displayTime();
+    }
+
+    private void displayTime() {
+        view.setTime((int) (timer.getTotalTime()/1000));
     }
 
     /**
@@ -222,11 +231,15 @@ public class GamePresenter implements GameContract.Presenter, Game.FlipListener 
 
     @Override
     public void selectCard(int row, int column) {
-        game.flip(row, column);
-        view.setFlipCount(game.getFlipCount());
+        if (!game.isOver()) {
+            game.flip(row, column);
+            view.setFlipCount(game.getFlipCount());
 
-        if (game.isOver()) {
-            endGame();
+            if (game.isOver()) {
+                endGame();
+            }
+        } else {
+            view.showEndGame();
         }
     }
 
@@ -258,13 +271,20 @@ public class GamePresenter implements GameContract.Presenter, Game.FlipListener 
 
     private void endGame() {
         timer.stop();
-        int totalTime = (int) (timer.getTotalTime()/1000);
-        int finalScore = computeScore(totalTime, game.getFlipCount());
+        int score = computeScore();
+        scoreDataSource.addScore(score);
+        displayEndGame(score);
+    }
 
-        scoreDataSource.addScore(finalScore);
-
-        view.setScore(finalScore);
+    private void displayEndGame(int score) {
+        displayTime();
+        view.setScore(score);
         view.showEndGame();
+    }
+
+    private int computeScore() {
+        int totalTime = (int) (timer.getTotalTime()/1000);
+        return computeScore(totalTime, game.getFlipCount());
     }
 
     /**
