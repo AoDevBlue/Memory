@@ -1,4 +1,4 @@
-package blue.aodev.memory.activities.game;
+package blue.aodev.memory.memory;
 
 import android.support.annotation.NonNull;
 
@@ -39,11 +39,11 @@ public class Card {
         return flipped;
     }
 
-    public void setFlipped(boolean flipped) {
+    void setFlipped(boolean flipped) {
         this.flipped = flipped;
     }
 
-    public void flip() {
+    void flip() {
         flipped = !flipped;
     }
 }

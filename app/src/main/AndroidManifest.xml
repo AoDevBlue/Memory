@@ -17,8 +17,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.game.GameActivity"
-            android:configChanges="orientation|screenSize" />
+            android:name=".activities.game.GameActivity" />
         <activity
             android:name=".activities.score.ScoresActivity"
             android:parentActivityName=".activities.main.MainActivity" />

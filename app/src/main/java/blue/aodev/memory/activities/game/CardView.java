@@ -13,6 +13,7 @@ import butterknife.BindColor;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import blue.aodev.memory.R;
+import blue.aodev.memory.memory.Card;
 
 /**
  * A view for a card of the memory game.

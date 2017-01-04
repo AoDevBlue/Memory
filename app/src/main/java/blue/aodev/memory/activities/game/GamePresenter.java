@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 import blue.aodev.memory.R;
@@ -14,6 +15,8 @@ import blue.aodev.memory.data.goal.GoalService;
 import blue.aodev.memory.data.goal.GoalItem;
 import blue.aodev.memory.data.goal.Goal;
 import blue.aodev.memory.data.score.ScoreDataSource;
+import blue.aodev.memory.memory.Card;
+import blue.aodev.memory.memory.Game;
 import blue.aodev.memory.util.Timer;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -22,7 +25,7 @@ import retrofit2.Response;
 /**
  * Presenter of the game activity.
  */
-public class GamePresenter implements GameContract.Presenter {
+public class GamePresenter implements GameContract.Presenter, Game.FlipListener {
 
     private static final int GOAL_ID = 470272;
 
@@ -35,23 +38,20 @@ public class GamePresenter implements GameContract.Presenter {
     /** The data of the GOAL_ID goal from the iKnow API **/
     private Goal data;
 
-    /** The state of the board **/
-    private Card[][] board;
-
-    /** The number of items the game has **/
-    private int itemCount;
-
-    /** The number of items that were matched **/
-    private int matchedItemCount;
-
-    /** The index of the card flipped first during a two cards flip **/
-    private Point firstFlippedPos;
+    /** The memory game **/
+    private Game game;
 
     /** Timer used to compute the score **/
     private Timer timer;
 
-    /** Number of flips made **/
-    private int flipCount;
+    /**
+     * Map of runnables for flipping cards back.
+     * The map is used to cancel those runnables.
+     */
+    private HashMap<Point, Runnable> flipBackRunnables;
+
+    /** Handler used for flipping cards back. **/
+    private Handler flipBackHandler;
 
     private final int ROW_COUNT;
     private final int COLUMN_COUNT;
@@ -69,6 +69,8 @@ public class GamePresenter implements GameContract.Presenter {
         ROW_COUNT = context.getResources().getInteger(R.integer.game_row_count);
 
         timer = getTimer();
+        flipBackHandler = new Handler();
+        flipBackRunnables = new HashMap<>();
     }
 
     private Timer getTimer() {
@@ -77,6 +79,7 @@ public class GamePresenter implements GameContract.Presenter {
             public void onUpdate(long elapsedTimeMs) {
                 int elaspedTime = (int) (elapsedTimeMs/1000);
                 view.setTime(elaspedTime);
+                int flipCount = game != null ? game.getFlipCount() : 0;
                 view.setScore(computeScore(elaspedTime, flipCount));
             }
         });
@@ -84,7 +87,7 @@ public class GamePresenter implements GameContract.Presenter {
 
     @Override
     public void start() {
-        if (board == null) {
+        if (game == null) {
             if (data == null) {
                 loadData();
             } else {
@@ -136,14 +139,12 @@ public class GamePresenter implements GameContract.Presenter {
      */
     @Override
     public void newGame() {
-        createBoard();
-        flipCount = 0;
-        matchedItemCount = 0;
+        createGame();
 
         // Display the initial state
         view.showGame();
         displayBoard();
-        view.setFlipCount(flipCount);
+        view.setFlipCount(game.getFlipCount());
         view.setTime(0);
 
         // Start the timer
@@ -153,14 +154,10 @@ public class GamePresenter implements GameContract.Presenter {
     /**
      * Prepare the board by selecting cards.
      */
-    private void createBoard() {
-        // Create the board structure
-        board = new Card[ROW_COUNT][COLUMN_COUNT];
-        view.setBoardSize(ROW_COUNT, COLUMN_COUNT);
-
+    private void createGame() {
         // Select as many items from the data as possible
         int targetSize = ROW_COUNT*COLUMN_COUNT;
-        itemCount = Math.min(data.getGoalItems().length, targetSize/2);
+        int itemCount = Math.min(data.getGoalItems().length, targetSize/2);
 
         // Create the corresponding cards
         List<Card> cards = new ArrayList<>(itemCount*2);
@@ -173,18 +170,18 @@ public class GamePresenter implements GameContract.Presenter {
         // Shuffle the cards
         Collections.shuffle(cards);
 
-        // Fill the board
-        for (int i = 0; i < itemCount*2; i++) {
-            board[i/COLUMN_COUNT][i%COLUMN_COUNT] = cards.get(i);
-        }
+        // Create the game and init the view
+        game = new Game(ROW_COUNT, COLUMN_COUNT, cards);
+        game.setFlipListener(this);
+        view.setBoardSize(ROW_COUNT, COLUMN_COUNT);
     }
 
     /**
      * Display all the cards of the board.
      */
     private void displayBoard() {
-        for (int i = 0; i < board.length; i++) {
-            for (int j = 0; j < board[i].length; j++) {
+        for (int i = 0; i < game.getRowCount(); i++) {
+            for (int j = 0; j < game.getColumnCount(); j++) {
                 displayCard(i, j);
             }
         }
@@ -194,7 +191,7 @@ public class GamePresenter implements GameContract.Presenter {
      * Display a card.
      */
     private void displayCard(int row, int column) {
-        Card card = board[row][column];
+        Card card = game.getCard(row, column);
         if (card == null) {
             return;
         }
@@ -210,84 +207,44 @@ public class GamePresenter implements GameContract.Presenter {
 
     @Override
     public void selectCard(int row, int column) {
-        Card flipping = board[row][column];
+        game.flip(row, column);
+        view.setFlipCount(game.getFlipCount());
 
-        if (flipping.isFlipped()) {
-            // We can't flip cards that are already flipped
-            return;
+        if (game.isOver()) {
+            endGame();
         }
+    }
 
-        // We flip the card to show it to the user
-        revealCard(row, column);
+    @Override
+    public void onFlip(final int row, final int column, @NonNull Card card) {
+        if (card.isFlipped()) {
+            displayCard(row, column);
 
-        if (firstFlippedPos == null) {
-            // It's the first card we flip, just store it
-            firstFlippedPos = new Point(row, column);
+            // We have to cancel the flip back if it had not occurred yet
+            Runnable runnable = flipBackRunnables.remove(new Point(row, column));
+            if (runnable != null) {
+                flipBackHandler.removeCallbacks(runnable);
+            }
         } else {
-            Card firstFlipped = board[firstFlippedPos.x][firstFlippedPos.y];
-
-            if (firstFlipped.getItemId() == flipping.getItemId()) {
-                // We have a match! We keep the two cards flipped
-                firstFlippedPos = null;
-
-                // We check for the game's end
-                matchedItemCount++;
-                if (matchedItemCount == itemCount) {
-                    endGame();
+            // We want to flip back the card with a delay so that
+            // users can still see it.
+            Runnable runnable = new Runnable() {
+                @Override
+                public void run() {
+                    if (view.isActive()) {
+                        displayCard(row, column);
+                    }
                 }
-            } else {
-                // We flip back the two cards after some time
-                flipBack(firstFlippedPos, new Point(row, column));
-                firstFlippedPos = null;
-            }
+            };
+            flipBackRunnables.put(new Point(row, column), runnable);
+            flipBackHandler.postDelayed(runnable, 1000);
         }
-    }
-
-    /**
-     * Flip a card that was not flipped and update the view.
-     */
-    private void revealCard(int row, int column) {
-        Card card = board[row][column];
-
-        // Flip the card
-        card.flip();
-        displayCard(row, column);
-
-        // Update the flip count
-        flipCount++;
-        view.setFlipCount(flipCount);
-    }
-
-    /**
-     * Flip back two cards that did not match.
-     */
-    private void flipBack(@NonNull final Point firstPos, @NonNull final Point secondPos) {
-        // The cards are instantly available for a new flip
-        board[firstPos.x][firstPos.y].flip();
-        board[secondPos.x][secondPos.y].flip();
-
-        // But are only visually flipped after some delay
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (view.isActive()) {
-                    // No need to display them if they have been flipped since
-                    if (!board[firstPos.x][firstPos.y].isFlipped()) {
-                        displayCard(firstPos.x, firstPos.y);
-                    }
-                    if (!board[secondPos.x][secondPos.y].isFlipped()) {
-                        displayCard(secondPos.x, secondPos.y);
-                    }
-                }
-            }
-        }, 1000);
     }
 
     private void endGame() {
         timer.stop();
         int totalTime = (int) (timer.getTotalTime()/1000);
-        int finalScore = computeScore(totalTime, flipCount);
+        int finalScore = computeScore(totalTime, game.getFlipCount());
 
         scoreDataSource.addScore(finalScore);
 
@@ -304,7 +261,7 @@ public class GamePresenter implements GameContract.Presenter {
     private int computeScore(int time, int flips) {
         int timeDecrement = 1;
         int flipDecrement = 10;
-        int bestFlipCount = itemCount*2; // The lowest possible number of flips
+        int bestFlipCount = game.getCardsCount(); // The lowest possible number of flips
 
         int score = bestFlipCount*2*flipDecrement;
         score -= time*timeDecrement;

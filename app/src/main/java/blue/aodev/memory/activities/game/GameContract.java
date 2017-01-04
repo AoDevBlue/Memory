@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 
 import blue.aodev.memory.BasePresenter;
 import blue.aodev.memory.BaseView;
+import blue.aodev.memory.memory.Card;
 
 public interface GameContract {
 

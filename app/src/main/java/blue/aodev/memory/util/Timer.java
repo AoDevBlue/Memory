@@ -53,6 +53,10 @@ public class Timer {
         return elapsedTime;
     }
 
+    public void offset(long offset) {
+        elapsedTime += offset;
+    }
+
     public void start() {
         if (state != State.STOPPED) {
             stop();
