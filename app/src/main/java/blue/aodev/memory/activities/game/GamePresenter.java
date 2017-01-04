@@ -308,7 +308,7 @@ public class GamePresenter implements GameContract.Presenter {
 
         int score = bestFlipCount*2*flipDecrement;
         score -= time*timeDecrement;
-        score -= Math.max(0, flips - bestFlipCount)*flipDecrement;
+        score -= (flips - bestFlipCount)*flipDecrement;
         score *= 100; // People like big numbers
 
         // Don't go below 100 and use another formula if the user

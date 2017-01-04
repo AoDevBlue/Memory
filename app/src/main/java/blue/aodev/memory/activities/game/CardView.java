@@ -16,6 +16,9 @@ import blue.aodev.memory.R;
 
 /**
  * A view for a card of the memory game.
+ *
+ * FIXME The card currently has an elevation of 0 because of
+ * its shadow behaviour while flipped.
  */
 public class CardView extends android.support.v7.widget.CardView {
 
@@ -45,7 +48,6 @@ public class CardView extends android.support.v7.widget.CardView {
         ButterKnife.bind(this);
 
         cardInfo = new GameContract.CardInfo(Card.Type.CUE, "", false);
-        updateText();
         updateType();
         setRotationY(180f);
         textView.setVisibility(INVISIBLE);
@@ -75,15 +77,17 @@ public class CardView extends android.support.v7.widget.CardView {
     }
 
     public void updateType() {
+        int color;
         switch (cardInfo.type) {
             case CUE:
-                setBackgroundColor(cueColor);
+                color = cueColor;
                 break;
             case RESPONSE:
             default:
-                setBackgroundColor(responseColor);
+                color = responseColor;
                 break;
         }
+        setCardBackgroundColor(color);
     }
 
     /**

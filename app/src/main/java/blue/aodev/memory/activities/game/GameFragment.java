@@ -141,11 +141,12 @@ public class GameFragment extends Fragment implements GameContract.View {
 
         LayoutInflater inflater = LayoutInflater.from(getContext());
         for (int i = 0; i < rowCount*columnCount; i++) {
-            inflater.inflate(R.layout.game_card, gameBoardLayout, true);
+            View view = inflater.inflate(R.layout.game_card, gameBoardLayout, false);
+            gameBoardLayout.addView(view);
 
             final int row = i/columnCount;
             final int column = i%columnCount;
-            gameBoardLayout.getChildAt(i).setOnClickListener(new View.OnClickListener() {
+            view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     presenter.selectCard(row, column);

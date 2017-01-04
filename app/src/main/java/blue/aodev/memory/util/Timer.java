@@ -1,6 +1,7 @@
 package blue.aodev.memory.util;
 
 import android.os.Handler;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 
 /**
@@ -36,7 +37,7 @@ public class Timer {
         runnable = new Runnable() {
             @Override
             public void run() {
-                long currentTime = System.currentTimeMillis();
+                long currentTime = SystemClock.uptimeMillis();
                 elapsedTime += currentTime - lastTime;
                 lastTime = currentTime;
                 listener.onUpdate(elapsedTime);
@@ -57,7 +58,7 @@ public class Timer {
             stop();
         }
         elapsedTime = 0;
-        lastTime = System.currentTimeMillis();
+        lastTime = SystemClock.uptimeMillis();
         handler.postDelayed(runnable, updateRateMs);
         state = State.STARTED;
     }
@@ -74,7 +75,7 @@ public class Timer {
         if (state != State.PAUSED) {
             return;
         }
-        lastTime = System.currentTimeMillis();
+        lastTime = SystemClock.uptimeMillis();
         handler.postDelayed(runnable, updateRateMs);
         state = State.STARTED;
     }
