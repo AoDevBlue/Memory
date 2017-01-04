@@ -1,11 +1,13 @@
 package blue.aodev.memory.memory;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 /**
  * A card of the memory board.
  */
-public class Card {
+public class Card implements Parcelable {
 
     public enum Type {
         CUE,
@@ -45,5 +47,37 @@ public class Card {
 
     void flip() {
         flipped = !flipped;
+    }
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(itemId);
+        dest.writeString(text);
+        dest.writeString(type.name());
+        dest.writeInt(flipped ? 1 : 0);
+    }
+
+    public static final Parcelable.Creator<Card> CREATOR
+            = new Parcelable.Creator<Card>() {
+        public Card createFromParcel(Parcel in) {
+            return new Card(in);
+        }
+
+        public Card[] newArray(int size) {
+            return new Card[size];
+        }
+    };
+
+    private Card(Parcel in) {
+        itemId = in.readInt();
+        text = in.readString();
+        type = Type.valueOf(in.readString());
+        flipped = in.readInt() != 0;
     }
 }

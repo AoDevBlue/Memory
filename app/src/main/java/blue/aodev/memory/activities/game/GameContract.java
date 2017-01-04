@@ -1,6 +1,8 @@
 package blue.aodev.memory.activities.game;
 
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import blue.aodev.memory.BasePresenter;
 import blue.aodev.memory.BaseView;
@@ -44,7 +46,9 @@ public interface GameContract {
 
         void displayHighScores();
 
-        // loadState and saveState would be here if we had state to save
+        void saveState(@Nullable Bundle outState);
+
+        void loadState(@Nullable Bundle savedState);
     }
 
     /**

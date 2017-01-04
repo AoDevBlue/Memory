@@ -2,8 +2,12 @@ package blue.aodev.memory.activities.game;
 
 import android.content.Context;
 import android.graphics.Point;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,6 +31,14 @@ import retrofit2.Response;
  */
 public class GamePresenter implements GameContract.Presenter, Game.FlipListener {
 
+    /**
+     * Bundle extras used to save and load state.
+     */
+    private static final String GOAL_DATA_EXTRA = "goal_data";
+    private static final String GAME_EXTRA = "game";
+    private static final String TIMER_EXTRA = "timer";
+
+    /** The goal to request from iKnow's API, currently static. **/
     private static final int GOAL_ID = 470272;
 
     private GameContract.View view;
@@ -42,7 +54,7 @@ public class GamePresenter implements GameContract.Presenter, Game.FlipListener 
     private Game game;
 
     /** Timer used to compute the score **/
-    private Timer timer;
+    private final Timer timer;
 
     /**
      * Map of runnables for flipping cards back.
@@ -55,6 +67,8 @@ public class GamePresenter implements GameContract.Presenter, Game.FlipListener 
 
     private final int ROW_COUNT;
     private final int COLUMN_COUNT;
+
+    private boolean firstStart = true;
 
     public GamePresenter(@NonNull Context context,
                          @NonNull GameContract.View view,
@@ -93,17 +107,17 @@ public class GamePresenter implements GameContract.Presenter, Game.FlipListener 
             } else {
                 newGame();
             }
+        } else if (firstStart) {
+            displayInitialState();
         }
-        if (timer != null) {
-            timer.resume();
-        }
+        timer.resume();
+
+        firstStart = false;
     }
 
     @Override
     public void stop() {
-        if (timer != null) {
-            timer.pause();
-        }
+        timer.pause();
     }
 
     @Override
@@ -140,15 +154,16 @@ public class GamePresenter implements GameContract.Presenter, Game.FlipListener 
     @Override
     public void newGame() {
         createGame();
+        displayInitialState();
+        timer.start();
+    }
 
-        // Display the initial state
+    private void displayInitialState() {
         view.showGame();
+        view.setBoardSize(ROW_COUNT, COLUMN_COUNT);
         displayBoard();
         view.setFlipCount(game.getFlipCount());
         view.setTime(0);
-
-        // Start the timer
-        timer.start();
     }
 
     /**
@@ -170,10 +185,9 @@ public class GamePresenter implements GameContract.Presenter, Game.FlipListener 
         // Shuffle the cards
         Collections.shuffle(cards);
 
-        // Create the game and init the view
+        // Create the game
         game = new Game(ROW_COUNT, COLUMN_COUNT, cards);
         game.setFlipListener(this);
-        view.setBoardSize(ROW_COUNT, COLUMN_COUNT);
     }
 
     /**
@@ -273,5 +287,37 @@ public class GamePresenter implements GameContract.Presenter, Game.FlipListener 
         int minScore = Math.max(500 - time, 100);
 
         return Math.max(score, minScore);
+    }
+
+    @Override
+    public void saveState(@Nullable Bundle outState) {
+        if (outState != null) {
+            if (data != null) {
+                Gson gson = new Gson();
+                outState.putString(GOAL_DATA_EXTRA, gson.toJson(data));
+            }
+            if (game != null) {
+                outState.putParcelable(GAME_EXTRA, game);
+            }
+            outState.putLong(TIMER_EXTRA, timer.getTotalTime());
+        }
+    }
+
+    @Override
+    public void loadState(@Nullable Bundle savedState) {
+        if (savedState != null) {
+            if (savedState.containsKey(GOAL_DATA_EXTRA)) {
+                Gson gson = new Gson();
+                data = gson.fromJson(savedState.getString(GOAL_DATA_EXTRA), Goal.class);
+            }
+            if (savedState.containsKey(GAME_EXTRA)) {
+                game = savedState.getParcelable(GAME_EXTRA);
+                game.setFlipListener(this);
+            }
+            long timerOffset = savedState.getLong(TIMER_EXTRA);
+            timer.start();
+            timer.offset(timerOffset);
+            timer.pause();
+        }
     }
 }

@@ -24,6 +24,8 @@ public class GameActivity extends AppCompatActivity {
 
     private ScoreDataSource scoreDataSource;
 
+    private GamePresenter presenter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,7 +48,14 @@ public class GameActivity extends AppCompatActivity {
                 .build();
         GoalService goalService = retrofit.create(GoalService.class);
         scoreDataSource = new ScoreOrmLiteSource(this);
-        new GamePresenter(this, gameFragment, goalService, scoreDataSource);
+        presenter = new GamePresenter(this, gameFragment, goalService, scoreDataSource);
+        presenter.loadState(savedInstanceState);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        presenter.saveState(outState);
     }
 
     @Override
