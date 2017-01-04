@@ -14,15 +14,9 @@ public class Timer {
         void onUpdate(long elapsedTimeMs);
     }
 
-    private enum State {
-        STOPPED,
-        PAUSED,
-        STARTED;
-    }
-
     private Handler handler;
     private Runnable runnable;
-    private State state = State.STOPPED;
+    private boolean running;
 
     private long elapsedTime;
     private long lastTime;
@@ -42,7 +36,7 @@ public class Timer {
                 lastTime = currentTime;
                 listener.onUpdate(elapsedTime);
 
-                if (state == State.STARTED) {
+                if (running) {
                     handler.postDelayed(this, updateRateMs);
                 }
             }
@@ -58,37 +52,23 @@ public class Timer {
     }
 
     public void start() {
-        if (state != State.STOPPED) {
-            stop();
-        }
-        elapsedTime = 0;
-        lastTime = SystemClock.uptimeMillis();
-        handler.postDelayed(runnable, updateRateMs);
-        state = State.STARTED;
-    }
-
-    public void pause() {
-        if (state != State.STARTED) {
-            return;
-        }
-        handler.removeCallbacks(runnable);
-        state = State.PAUSED;
-    }
-
-    public void resume() {
-        if (state != State.PAUSED) {
+        if (running) {
             return;
         }
         lastTime = SystemClock.uptimeMillis();
         handler.postDelayed(runnable, updateRateMs);
-        state = State.STARTED;
+        running = true;
     }
 
     public void stop() {
-        if (state == State.STOPPED) {
+        if (!running) {
             return;
         }
         handler.removeCallbacks(runnable);
-        state = State.STOPPED;
+        running = false;
+    }
+
+    public void reset() {
+        elapsedTime = 0;
     }
 }

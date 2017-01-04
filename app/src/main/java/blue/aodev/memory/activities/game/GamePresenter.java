@@ -107,17 +107,18 @@ public class GamePresenter implements GameContract.Presenter, Game.FlipListener 
             } else {
                 newGame();
             }
-        } else if (firstStart) {
-            displayInitialState();
+        } else {
+            timer.start();
+            if (firstStart) {
+                displayInitialState();
+            }
         }
-        timer.resume();
-
         firstStart = false;
     }
 
     @Override
     public void stop() {
-        timer.pause();
+        timer.stop();
     }
 
     @Override
@@ -315,9 +316,7 @@ public class GamePresenter implements GameContract.Presenter, Game.FlipListener 
                 game.setFlipListener(this);
             }
             long timerOffset = savedState.getLong(TIMER_EXTRA);
-            timer.start();
             timer.offset(timerOffset);
-            timer.pause();
         }
     }
 }
