@@ -28,6 +28,5 @@ The current state of the project is fine, but here is a list of improvements to 
 * It doesn't have any test right now, but it needs some.
 * The `MainActivity` UI is far from good, the `MainActivity` could even be deleted.
 * The API request takes a long time to complete. The results are not cached because usually the request id would change, but a cache or a lightweight request would be better.
-* The game logic should be moved outside the `GamePresenter`.
 * The game board should be rotated on device rotation (it's currently streched).
 
